@@ -1,0 +1,27 @@
+
+microlibs: Small, one-file libs
+
+Problem: Annoying to manage with seperate repos, versions, setup.py, etc
+Lots of overhead and boilerplate.
+
+Idea for a utility to manage them
+Takes the form of a managed git repo
+
+Each lib -> a file in root dir
+All info on a lib is contained in file:
+	* licence
+	* description
+	* author
+	etc (all optional)
+Given as eg. __AUTHOR__ or pulled from docstring for description
+Name is file name.
+Minor versions get autoincremented by a commit hook?
+
+microlib build -> creates a build dir with full package layout, ie
+build/
+ lib name/
+  setup.py
+  lib name/
+    libname.py
+  LICENCE
+  README (from docstring)

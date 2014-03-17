@@ -9,8 +9,8 @@ from generate import gen_setup
 
 def generate(name):
 	lib = Lib(config.libdir, name)
-	setup = gen_setup(lib)
 	path = os.path.join(config.setupdir, lib.name)
+	setup = gen_setup(lib, location=config.topdir)
 	os.makedirs(path)
 	with open(os.path.join(path, 'setup.py'), 'w') as f:
 		f.write(setup)

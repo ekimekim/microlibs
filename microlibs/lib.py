@@ -23,6 +23,7 @@ class Lib(object):
 		if name.endswith('.py'):
 			name = name[:-len('.py')]
 
+		self.path = path
 		self.name = name
 
 		sys.path.insert(0, path)
@@ -86,4 +87,4 @@ class Lib(object):
 
 	@property
 	def version(self):
-		return "%s.%d" % (self.base_version, time.time())
+		return "%s.%d" % (self.base_version or '0.0', time.time())

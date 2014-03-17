@@ -46,7 +46,7 @@ def gen_setup(lib, location=None):
 		if not good:
 			raise ValueError("Illegal value %r - doesn't repr/eval cleanly" % value)
 
-	setup_kwarg_string = '\n'.join("\t%s = %r" % item for item in setup_kwargs.items())
+	setup_kwarg_string = '\n'.join("\t%s = %r," % item for item in setup_kwargs.items())
 	return (
 		"from setuptools import setup\n"
 		"\n"

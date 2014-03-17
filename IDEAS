@@ -15,17 +15,18 @@ All info on a lib is contained in file:
 	etc (all optional)
 Given as eg. __AUTHOR__ or pulled from docstring for description
 Name is file name.
-Minor versions get autoincremented by a commit hook?
 
 microlib build -> creates a build dir with full package layout, ie
 build/
  lib name/
   setup.py
-  lib name/
-    libname.py
+  libname.py
   LICENCE
   README (from docstring)
 
 Commands:
 microlib build [NAME] - create/update build dir with libs (or specific lib)
-microlib setup[.py] NAME {ARGS} - run setup.py for given lib with given args
+microlib setup[.py] NAME {ARGS} - run setup.py for given lib with given args, or all if NAME == "all"
+microlib list - list libs found in this repo
+
+TODO: LICENCE and README files

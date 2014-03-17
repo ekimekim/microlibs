@@ -44,6 +44,10 @@ def gen_setup(lib):
 	) % setup_kwarg_string
 
 def gen_dir(lib, path):
+	"""Generate a directory containing a working setup.py
+	along with symlinks to fake the structure distutils requires.
+	Note this DOES NOT WORK with pip as pip is stupid and refuses to allow symlinks."""
+
 	if not os.path.exists(path):
 		os.makedirs(path)
 	with open(os.path.join(path, 'setup.py'), 'w') as f:

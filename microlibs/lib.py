@@ -3,6 +3,8 @@ import re
 import sys
 import time
 
+import config
+
 
 class Lib(object):
 

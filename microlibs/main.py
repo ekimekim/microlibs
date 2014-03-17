@@ -4,13 +4,13 @@ import subprocess
 
 from lib import Lib
 import config
-import generate
+from generate import gen_setup
 
 
 def generate(name):
 	lib = Lib(config.libdir, name)
-	setup = generate.gen_setup(lib)
-	path = os.path.join(config.setupdir, name)
+	setup = gen_setup(lib)
+	path = os.path.join(config.setupdir, lib.name)
 	os.makedirs(path)
 	with open(os.path.join(path, 'setup.py'), 'w') as f:
 		f.write(setup)
@@ -20,6 +20,8 @@ def list_libs():
 	for name in os.listdir(config.libdir):
 		if name.startswith('.'): continue # ignore hidden files
 		if os.path.join(config.libdir, name) == config.setupdir: continue # ignore setupdir contained in libdir
+		_, ext = os.path.splitext(name)
+		if ext not in ('', '.py'): continue # if there's an extension, it must be .py
 		ret.append(name)
 	return ret
 
@@ -37,7 +39,9 @@ def main():
 		for arg in args:
 			generate(arg)
 	elif cmd == 'list':
-		print '\n'.join(list_libs())
+		libs = list_libs()
+		if libs:
+			print '\n'.join(libs)
 	elif cmd in ('setup', 'setup.py'):
 		name = args.pop(0)
 		if name == 'all':

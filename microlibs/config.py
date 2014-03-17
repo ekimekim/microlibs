@@ -17,7 +17,7 @@ CONF_FILE = os.environ.get('MICROLIB_CONF', None) or os.path.expanduser("~/.micr
 topdir = cmd(['git', 'rev-parse', '--show-toplevel'])
 
 # author: Default project (author, author_email). By default, queries git config.
-author = [cmd(['git', 'config', key] for key in ('user.name', 'user.email')]
+author = [cmd(['git', 'config', key]) for key in ('user.name', 'user.email')]
 
 # libdir: Directory to look for libs in, relative to git top level dir
 libdir = 'libs'

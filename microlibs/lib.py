@@ -62,7 +62,7 @@ class Lib(object):
 	def author_info(self):
 		name, email = self._name_and_email('__AUTHOR__')
 		if not name:
-			return 'NOBODY', None # TODO default author
+			return config.author
 		return name, email
 	@property
 	def author(self):

@@ -17,7 +17,7 @@ def list_libs():
 	for name in os.listdir(config.libdir):
 		if name.startswith('.'): continue # ignore hidden files
 		if os.path.join(config.libdir, name) == config.setupdir: continue # ignore setupdir contained in libdir
-		_, ext = os.path.splitext(name)
+		name, ext = os.path.splitext(name)
 		if ext not in ('', '.py'): continue # if there's an extension, it must be .py
 		ret.append(name)
 	return ret

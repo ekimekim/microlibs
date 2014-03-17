@@ -21,7 +21,7 @@ def gen_setup(lib):
 	if lib.is_package:
 		setup_kwargs['packages'] = [lib.name] + find_packages(lib.filename)
 	else:
-		setup_kwargs['py_modules'] = [lib.name + '.py']
+		setup_kwargs['py_modules'] = [lib.name]
 
 	# there's no real nice way to do this, the best we can do is ensure eval(repr(x)) == x
 	for value in setup_kwargs.values():
@@ -45,7 +45,7 @@ def gen_setup(lib):
 
 def gen_dir(lib, path):
 	if not os.path.exists(path):
-		os.path.makedirs(path)
+		os.makedirs(path)
 	with open(os.path.join(path, 'setup.py'), 'w') as f:
 		f.write(gen_setup(lib))
 	link_path = os.path.join(path, os.path.basename(lib.filename))

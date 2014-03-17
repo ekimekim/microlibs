@@ -4,16 +4,13 @@ import subprocess
 
 from lib import Lib
 import config
-from generate import gen_setup
+from generate import gen_dir
 
 
 def generate(name):
 	lib = Lib(config.libdir, name)
 	path = os.path.join(config.setupdir, lib.name)
-	setup = gen_setup(lib, location=path)
-	if not os.path.exists(path): os.makedirs(path)
-	with open(os.path.join(path, 'setup.py'), 'w') as f:
-		f.write(setup)
+	gen_dir(lib, path)
 
 def list_libs():
 	ret = []

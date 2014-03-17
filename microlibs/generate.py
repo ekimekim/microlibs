@@ -2,9 +2,9 @@ import os
 from setuptools import find_packages
 
 
-def gen_setup(lib, location=None):
+def gen_setup(lib):
 	"""Takes a Lib and generates a setup.py file for it.
-	If location is given, makes paths relative to it.
+	Note resulting setup.py requires all files to be in the same dir as it.
 	"""
 	SETUP_KWARGS = {
 		'name',
@@ -18,23 +18,10 @@ def gen_setup(lib, location=None):
 		'licence',
 	}
 	setup_kwargs = {kwarg: getattr(lib, kwarg) for kwarg in SETUP_KWARGS if getattr(lib, kwarg)}
-	pkg_path = os.path.join(lib.path, lib.name)
-	if os.path.isdir(pkg_path):
-		setup_kwargs['package_dir'] = {'': lib.path}
-		setup_kwargs['packages'] = [lib.name] + find_packages(pkg_path)
-	elif os.path.isfile(pkg_path + '.py'):
-		setup_kwargs['py_modules'] = [pkg_path + '.py']
+	if lib.is_package:
+		setup_kwargs['packages'] = [lib.name] + find_packages(lib.filename)
 	else:
-		raise ValueError("Cannot find module or package at %r", pkg_path)
-
-	# make paths relative
-	if location:
-		if 'package_dir' in setup_kwargs:
-			setup_kwargs['package_dir'][''] = os.path.relpath(setup_kwargs['package_dir'][''], location)
-		if 'packages' in setup_kwargs:
-			setup_kwargs['packages'] = [os.path.relpath(pkg, location) for pkg in setup_kwargs['packages']]
-		if 'py_modules' in setup_kwargs:
-			setup_kwargs['py_modules'] = [os.path.relpath(module, location) for module in setup_kwargs['py_modules']]
+		setup_kwargs['py_modules'] = [lib.name + '.py']
 
 	# there's no real nice way to do this, the best we can do is ensure eval(repr(x)) == x
 	for value in setup_kwargs.values():
@@ -47,6 +34,7 @@ def gen_setup(lib, location=None):
 			raise ValueError("Illegal value %r - doesn't repr/eval cleanly" % value)
 
 	setup_kwarg_string = '\n'.join("\t%s = %r," % item for item in setup_kwargs.items())
+
 	return (
 		"from setuptools import setup\n"
 		"\n"
@@ -55,3 +43,11 @@ def gen_setup(lib, location=None):
 		")\n"
 	) % setup_kwarg_string
 
+def gen_dir(lib, path):
+	if not os.path.exists(path):
+		os.path.makedirs(path)
+	with open(os.path.join(path, 'setup.py'), 'w') as f:
+		f.write(gen_setup(lib))
+	link_path = os.path.join(path, os.path.basename(lib.filename))
+	if not os.path.exists(link_path):
+		os.symlink(os.path.relpath(lib.filename, path), link_path)

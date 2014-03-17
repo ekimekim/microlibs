@@ -1,5 +1,6 @@
 import importlib
 import re
+import os
 import sys
 import time
 
@@ -90,3 +91,20 @@ class Lib(object):
 	@property
 	def version(self):
 		return "%s.%d" % (self.base_version or '0.0', time.time())
+
+	@property
+	def is_package(self):
+		pkg_path = os.path.join(self.path, self.name)
+		if os.path.isdir(pkg_path):
+			return True
+		elif os.path.isfile(pkg_path + '.py'):
+			return False
+		else:
+			raise ValueError("Cannot find module or package at %r", pkg_path)
+
+	@property
+	def filename(self):
+		ret = os.path.join(self.path, self.name)
+		if not self.is_package:
+			ret += '.py'
+		return ret

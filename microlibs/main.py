@@ -24,6 +24,7 @@ def list_libs():
 
 def run_setup(name, args):
 	setup_file = os.path.join(config.setupdir, name, 'setup.py')
+	os.chdir(os.path.dirname(setup_file)) # this makes sure the build/ dist/ and other crap ends up in the right place
 	subprocess.check_call(['python', setup_file] + list(args))
 
 def main():

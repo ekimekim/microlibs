@@ -38,8 +38,13 @@ def main():
 			generate(arg)
 	elif cmd == 'list':
 		libs = list_libs()
+		verbose = '-v' in args
 		if libs:
-			print '\n'.join(libs)
+			if verbose:
+				print '\n'.join('%s - %s' % (name, Lib(config.libdir, name).description)
+				                for name in libs)
+			else:
+				print '\n'.join(libs)
 	elif cmd in ('setup', 'setup.py'):
 		name = args.pop(0)
 		if name == 'all':

@@ -6,6 +6,12 @@ from lib import Lib
 import config
 from generate import gen_dir
 
+HELP = """Commands:
+	generate {LIBS} - Generate a setup.py for each given lib, or all libs if not given.
+	help - Print this help
+	list - Print a list of all libs.
+	setup (LIB|all) {ARGS} - Run setup.py for given lib (or all libs) with given args.
+"""
 
 def generate(name):
 	lib = Lib(config.libdir, name)
@@ -28,10 +34,13 @@ def run_setup(name, args):
 	subprocess.check_call(['python', setup_file] + list(args))
 
 def main():
-	progname, cmd = sys.argv[:2]
+	progname = sys.argv[0]
+	cmd = sys.argv[1] if len(sys.argv) > 1 else 'help'
 	args = sys.argv[2:]
 
-	if cmd == 'generate':
+	if cmd == 'help':
+		print HELP
+	elif cmd == 'generate':
 		if not args:
 			args = list_libs()
 		for arg in args:

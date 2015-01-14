@@ -7,5 +7,5 @@ setup(
 	author = "Mike Lang",
 	author_email = "mikelang3000@gmail.com",
 	packages = ['microlibs'],
-	entry_points = {'console_scripts':['microlibs = microlibs:main']},
+	entry_points = {'console_scripts':['microlibs = microlibs.main:cli']},
 )

@@ -1,24 +1,17 @@
-import sys
 import os
 import subprocess
 
-from lib import Lib
-import config
-from generate import gen_dir
+from argh import EntryPoint, arg, aliases, named
 
-HELP = """Commands:
-	generate {LIBS} - Generate a setup.py for each given lib, or all libs if not given.
-	help - Print this help
-	list - Print a list of all libs.
-	setup (LIB|all) {ARGS} - Run setup.py for given lib (or all libs) with given args.
-"""
+from microlibs import config
+from microlibs.lib import Lib
+from microlibs.generate import gen_dir
 
-def generate(name):
-	lib = Lib(config.libdir, name)
-	path = os.path.join(config.setupdir, lib.name)
-	gen_dir(lib, path)
 
-def list_libs():
+cli = EntryPoint()
+
+
+def get_libs():
 	ret = []
 	for name in os.listdir(config.libdir):
 		if name.startswith('.'): continue # ignore hidden files
@@ -28,38 +21,42 @@ def list_libs():
 		ret.append(name)
 	return ret
 
-def run_setup(name, args):
-	setup_file = os.path.join(config.setupdir, name, 'setup.py')
-	os.chdir(os.path.dirname(setup_file)) # this makes sure the build/ dist/ and other crap ends up in the right place
-	subprocess.check_call(['python', setup_file] + list(args))
 
-def main():
-	progname = sys.argv[0]
-	cmd = sys.argv[1] if len(sys.argv) > 1 else 'help'
-	args = sys.argv[2:]
+@cli
+def generate(*libs):
+	"""Generate a setup.py for each given lib, or all libs if none given"""
+	if not libs:
+		libs = get_libs()
+	for name in libs:
+		lib = Lib(config.libdir, name)
+		path = os.path.join(config.setupdir, lib.name)
+		gen_dir(lib, path)
 
-	if cmd == 'help':
-		print HELP
-	elif cmd == 'generate':
-		if not args:
-			args = list_libs()
-		for arg in args:
-			generate(arg)
-	elif cmd == 'list':
-		libs = list_libs()
-		verbose = '-v' in args
-		if libs:
-			if verbose:
-				print '\n'.join('%s - %s' % (name, Lib(config.libdir, name).description)
-				                for name in libs)
-			else:
-				print '\n'.join(libs)
-	elif cmd in ('setup', 'setup.py'):
-		name = args.pop(0)
-		if name == 'all':
-			for lib in list_libs():
-				run_setup(lib, args)
-		else:
-			run_setup(name, args)
+
+@cli
+@aliases('setup.py')
+def setup(lib, *args):
+	"""Run setup.py for given lib (or 'all' for all libs) with given args"""
+	libs = get_libs() if lib == 'all' else (lib,)
+	for lib in libs:
+		setup_file = os.path.join(config.setupdir, lib, 'setup.py')
+		os.chdir(os.path.dirname(setup_file)) # this makes sure the build/ dist/ and other crap ends up in the right place
+		subprocess.check_call(['python', setup_file] + list(args))
+
+
+@cli
+@arg('--verbose', help='Print description along with name')
+@named('list')
+def list_libs(verbose=False):
+	"""List all libs"""
+	raise Exception()
+	libs = get_libs()
+	if verbose:
+		print '\n'.join('{} - {}'.format(name, Lib(config.libdir, name).description)
+						for name in libs)
 	else:
-		raise ValueError("Unknown command")
+		print '\n'.join(libs)
+
+
+if __name__ == '__main__':
+	cli()

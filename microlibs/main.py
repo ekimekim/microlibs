@@ -49,7 +49,6 @@ def setup(lib, *args):
 @named('list')
 def list_libs(verbose=False):
 	"""List all libs"""
-	raise Exception()
 	libs = get_libs()
 	if verbose:
 		print '\n'.join('{} - {}'.format(name, Lib(config.libdir, name).description)

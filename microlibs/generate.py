@@ -16,6 +16,7 @@ def gen_setup(lib):
 		'description',
 		'long_description',
 		'licence',
+		'install_requires',
 	}
 	setup_kwargs = {kwarg: getattr(lib, kwarg) for kwarg in SETUP_KWARGS if getattr(lib, kwarg)}
 	if lib.is_package:

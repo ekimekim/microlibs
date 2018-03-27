@@ -55,4 +55,4 @@ def gen_dir(lib, path):
 		f.write(gen_setup(lib))
 	link_path = os.path.join(path, os.path.basename(lib.filename))
 	if not os.path.exists(link_path):
-		os.symlink(os.path.relpath(lib.filename, path), link_path)
+		os.link(lib.filename, link_path)
